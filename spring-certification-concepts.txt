@@ -1,0 +1,54 @@
+Application Context:
+- Is central part of spring,
+- It creates bean based on @componentScan and @service/@component 
+- It can be used to fetch any bean , so that that object can be used to call methods
+- Creates object of all the bean provided, maps it , provide lifecycle hooks to it and if some one needs it provides it
+
+types:
+a. AnnotionContext: This is used when we are using annotation and not xml.
+	-> creates all @service/@componetn annotated objects, maps to bean and if anywhere is autowired , provides the object there
+b. xmlapplicationcontext: based on xml , could be in classpath or in filesystem -> differetn context class for both
+
+- Are beans lazily/eagerly initialzed:
+: depends upon scope
+for singleton sicne it never changes it caches it during startup and hence initialization is eager
+- for other scopes these are lazy as everytime it changes
+
+- @propertySource is used to load profilty file key value pairs to @value/@enviroinment bean
+	-> proeprty file can be present in classpath or filesystem
+	but @value makes it mandaotry to be present otherwise server do not starts
+
+- @postconstruct is better thatn constructor as spring uses reflection and hence if we out some initialization inc sontructor
+	then fileds will still be null
+	however postconstruct method will only get called once all fields are instantiated for a bean
+	-> same with @afterproertiesset
+
+- Benefits of java config /anntoation config vs xml bean config:
+a. I we have constructor dependency then using java D.I , compiler can do type check and prevent wrong bean setting
+	however in case of beans.xml concept, the <constructor ref="classtype" is passed thorugh xml and compiler wont know what value is to be set in actual class
+	hence error occurs at runtime/server start, not fail fast
+b. in beans.xml we have to define fully qualified name of class, what if apckage is renamed/class is renamed, we must manually update the xml
+	this issue wont happen in java annotation based, as compilation error will help us find issue quickly and in big project saves us a lot of time
+
+
+benefit of @bean config vs @service/component
+a. if we want to create functionality with plugin/plugout, just create class and method but do not define @service 
+	so using @bean only we can add these object for D.I and use @autowired
+b. If functionaloty is not based on spring. then we can import the jar and just use @bean to create their object and use @autowired at user interfaces
+
+- To enable singleton pattern in spring , it uses a proxy class
+	, it puts the first tie object is created in a varible in proxy class if null ,and otherwise it do not call the constructor
+	just keep returning static field value
+
+- All the classes with @configuration is used and spring cretaes proxy object for them,
+	hence it is not possiblr to create a @configurationa nnotated calss to be final
+
+- We can setup multiple profile for a bean either @bean level or @service/@component level	
+	-> meaning the same class will be loaded to spring dependency injection for any one of the active profile
+- Also we can setup n number of profiles to be active using spring.profiles.active flag
+
+- Environment and @value have access to same values and can take values form below:
+	. application.properties
+	. VM/java arguments
+	. system environment valriables like JAVA_HOME, MAVEN_HOME etc
+	. any key value provided in @propertySources annotaiton
