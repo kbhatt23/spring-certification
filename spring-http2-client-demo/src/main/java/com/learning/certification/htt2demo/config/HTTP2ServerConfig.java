@@ -1,19 +1,14 @@
-package com.learning.certification.htt2demo;
+package com.learning.certification.htt2demo.config;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http2.Http2Protocol;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
-public class Http1ServerApplication {
+@Configuration
+public class HTTP2ServerConfig {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Http1ServerApplication.class, args);
-	}
-	
 	@Bean
 	public TomcatServletWebServerFactory tomcatFactory() {
 		return new TomcatServletWebServerFactory() {

@@ -1,5 +1,7 @@
 package com.learning.certification.htt2demo.service;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,9 @@ public class Http2RestController {
 	@GetMapping("/okhttp/string")
 	public String sampleHttp2GetApiOkHttpString() {
 		return http2Service.makeHttp2RequestOkHttpString();
+	}
+	@GetMapping("/okhttp/time-consuming")
+	public CompletableFuture<String> sampleHttp2GetApiOkTimeConsuming() {
+		return http2Service.timeConsumingAsync();
 	}
 }
