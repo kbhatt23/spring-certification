@@ -32,18 +32,20 @@ public class Http2Service {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Http2Service.class);
 
-	public static final Consumer<String> FIRE_FORGET_CONSUMER = response -> {
-		LOG.info("Callback Task started by Thread: "+Thread.currentThread().getName());
-		
-		//mimicking some task
+	public void fireForgetConsumer(String response) {
+
+		LOG.info("Callback Task started by Thread: " + Thread.currentThread().getName());
+
+		// mimicking some task
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		LOG.info("Callback Task completed by Thread: "+Thread.currentThread().getName());
-	};
+
+		LOG.info("Callback Task completed by Thread: " + Thread.currentThread().getName());
+
+	}
 
 	@Autowired
 	public Http2Service(RestTemplate restTemplate, OkHttpClient okHttpClient) {
@@ -124,21 +126,27 @@ public class Http2Service {
 					if (response.isSuccessful()) {
 						ResponseBody responseBody = response.body();
 						if (responseBody != null) {
+							LOG.info("response protocol used: " + response.protocol().name());
+							LOG.info("timeConsumingFireAndForget: success response recieved, executing callback: "+Thread.currentThread().getName());
 							String result = responseBody.string();
 							future.complete(result);
 						} else {
+							LOG.info("timeConsumingFireAndForget: empty response recieved, skipping callback"+Thread.currentThread().getName());
 							future.completeExceptionally(new IOException("Response body is null"));
 						}
 					} else {
+						LOG.info("timeConsumingFireAndForget: failure response recieved, skipping callback"+Thread.currentThread().getName());
 						future.completeExceptionally(new IOException("Request failed with code " + response.code()));
 					}
 				} catch (IOException e) {
+					LOG.error("timeConsumingFireAndForget: execption response recieved, skipping callback"+Thread.currentThread().getName());
 					future.completeExceptionally(e);
 				}
 			}
 
 			@Override
 			public void onFailure(Call call, IOException e) {
+				LOG.error("timeConsumingFireAndForget: onFailure response recieved : {} ", e.getMessage());
 				future.completeExceptionally(e);
 			}
 		});
@@ -178,7 +186,7 @@ public class Http2Service {
 		return apiResponse;
 	}
 
-	public void timeConsumingFireAndForget(Consumer<String> callBackFunction) {
+	public void timeConsumingFireAndForget1(Consumer<String> callBackFunction) {
 		Request request = new Request.Builder().url(TIME_CONSUMING_API_URL).build();
 
 		Call call = okHttpClient.newCall(request);
@@ -212,4 +220,5 @@ public class Http2Service {
 
 		LOG.info("timeConsumingFireAndForget: okhttp2 task submitted");
 	}
+
 }

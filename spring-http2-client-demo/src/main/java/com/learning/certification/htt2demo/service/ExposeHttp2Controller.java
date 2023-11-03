@@ -22,9 +22,17 @@ public class ExposeHttp2Controller {
 		return service.makeHttp2RequestOkHttpString("http://localhost:8081/http1");
 	}
 	
-	@GetMapping("/fire-forget")
-	public String fireAndForget() {
-		service.timeConsumingFireAndForget(service.FIRE_FORGET_CONSUMER);
+	@GetMapping("/fire-forget1")
+	public String fireAndForget1() {
+		service.timeConsumingFireAndForget1(service :: fireForgetConsumer);
+		return "SUCCESS";
+	}
+	
+	@GetMapping("/fire-forget2")
+	public String fireAndForget2() {
+		service.timeConsumingAsync()
+		  .thenAccept(service :: fireForgetConsumer)
+		;
 		return "SUCCESS";
 	}
 }
